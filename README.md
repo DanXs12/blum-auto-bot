@@ -24,7 +24,7 @@ Blum Airdrop Bot automates interactions with the Blum airdrop platform. It inclu
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/dante4rt/blum-airdrop-bot.git
+    git clone https://github.com/DanXs12/blum-auto-bot.git
     ```
 
 2. **Navigate to the project directory:**
@@ -43,20 +43,20 @@ Blum Airdrop Bot automates interactions with the Blum airdrop platform. It inclu
 
 1. **Create a `.env` file** in the root directory of the project.
 
-2. **Add your `QUERY_ID` to the `.env` file**. Example format:
+2. **Add your `QUERY_IDS` to the `.env` file, use `,` in query_id to multi-account**. Example format:
 
     ```env
-    QUERY_ID=YOUR_QUERY_ID_VALUE_HERE
+    QUERY_IDS=YOUR_QUERY_ID_VALUE1_HERE,YOUR_QUERY_ID_VALUE2_HERE,YOUR_QUERY_ID_VALUE3_HERE
     ```
 
    - To find your `QUERY_ID`, follow these steps:
      1. Open [Web Telegram](https://web.telegram.org) in your browser.
-     2. Open the [Blum Bot](https://t.me/BlumCryptoBot/app?startapp=ref_vTHusRz4j0).
+     2. Open the [Blum Bot](https://t.me/blum/app?startapp=ref_U0ukWHnhnu).
      3. Open DevTools (right-click on the page and select "Inspect" or press `F12`).
      4. Go to the "Application" tab, then "Local Storage", and choose `https://telegram.blum.codes`.
      5. Find `QUERY_ID`, copy its value.
 
-   - **Connection Issues?** If you can't open the Blum bot, you may need to use the following Chrome extension to bypass connection restrictions: [Ignore X-Frame-Headers](https://chromewebstore.google.com/detail/ignore-x-frame-headers/gleekbfjekiniecknbkamfmkohkpodhe).
+   - **Connection Issues on Telegram Web?** If you can't open the Blum bot, you may need to use the following Chrome extension to bypass connection restrictions: [Ignore X-Frame-Headers](https://chromewebstore.google.com/detail/ignore-x-frame-headers/gleekbfjekiniecknbkamfmkohkpodhe).
 
 ### Running the Bot
 
@@ -65,14 +65,6 @@ To start the bot, run:
 ```bash
 npm start
 ```
-
-## Donations
-
-If you would like to support the development of this project, you can make a donation using the following addresses:
-
-- **Solana**: `GLQMG8j23ookY8Af1uLUg4CQzuQYhXcx56rkpZkyiJvP`
-- **EVM**: `0x960EDa0D16f4D70df60629117ad6e5F1E13B8F44`
-- **BTC**: `bc1p9za9ctgwwvc7amdng8gvrjpwhnhnwaxzj3nfv07szqwrsrudfh6qvvxrj8`
 
 ## License
 
