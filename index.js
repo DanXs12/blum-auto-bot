@@ -225,7 +225,7 @@ const handleTasksForQueryID = async (queryId) => {
     };
 
     // Use the countdown function
-    const duration = 72000; // 2 hours in milliseconds
+    const duration = 7380000; // 2 hours in milliseconds
     await countdown(duration);
 
   }
