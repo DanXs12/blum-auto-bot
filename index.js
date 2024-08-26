@@ -111,10 +111,10 @@ const handleTasksForQueryID = async (queryId) => {
       while (counter > 0) {
         const gameData = await getGameId(token);
 
-        console.log('⌛ Please wait for 1 minute to play the game...'.yellow);
-        await delay(60000);
+        console.log('⌛ Please wait for 30 second(s) to play the game...'.yellow);
+        await delay(30000);
 
-        const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 160;
+        const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 200;
         const letsPlay = await claimGamePoints(
           token,
           gameData.gameId,
@@ -124,7 +124,11 @@ const handleTasksForQueryID = async (queryId) => {
         if (letsPlay === 'OK') {
           const balance = await getBalance(token);
           console.log(
-            `🎮 Play game success! Your balance now: ${balance.availableBalance} BLUM`
+            `🎮 Play game success! Your got ${randPoints} BLUM`
+              .green
+          );
+          console.log(
+            `🪙 Your balance now: ${balance.availableBalance} BLUM`
               .green
           );
         }
@@ -174,8 +178,6 @@ const handleTasksForQueryID = async (queryId) => {
         }
       }
     }
-
-    console.log('next update farm 🌾🌾🌾'.blue);
   } catch (error) {
     console.error('🚨 Error occurred:'.red, error.message);
   }
