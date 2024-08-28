@@ -70,6 +70,17 @@ const handleTasksForQueryID = async (queryId) => {
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
 
+    const reward = await claimDailyReward(token);
+    if (reward) {
+      console.log('✅ Daily reward claimed successfully!'.green);
+    }
+    setupDailyRewardCron(token);
+
+    console.log('');
+    console.log('⌛ Please wait a moment...'.yellow);
+    await delay(5000);
+    console.log('');
+
     console.log('🌾 Claiming farm reward...'.yellow);
     const claimResponse = await claimFarmReward(token);
 
@@ -101,9 +112,17 @@ const handleTasksForQueryID = async (queryId) => {
       await startAndMonitorFarmingSession();
       // setupBalanceCheckJob(token);
     }
+    console.log('');
+    console.log('⌛ Please wait a moment...'.yellow);
+    await delay(5000);
+    console.log('');
 
     setupFarmRewardCron(token);
-    setupDailyRewardCron(token);
+
+    console.log('');
+    console.log('⌛ Please wait a moment...'.yellow);
+    await delay(5000);
+    console.log('');
 
     console.log('🎮 Checking if game has been played...'.yellow);
     if (balance.playPasses > 0) {
@@ -114,7 +133,7 @@ const handleTasksForQueryID = async (queryId) => {
         console.log('⌛ Please wait for 30 second(s) to play the game...'.yellow);
         await delay(30000);
 
-        const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 200;
+        const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
         const letsPlay = await claimGamePoints(
           token,
           gameData.gameId,
@@ -141,6 +160,10 @@ const handleTasksForQueryID = async (queryId) => {
     }
 
     console.log('');
+    console.log('⌛ Please wait a moment...'.yellow);
+    await delay(5000);
+    console.log('');
+
     console.log('✅ Check auto completing tasks...'.green);
 
     const tasksData = await getTasks(token);
