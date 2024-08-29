@@ -34,7 +34,7 @@ const handleTasksForQueryID = async (queryId) => {
   process.env.QUERY_ID = queryId; // Set the QUERY_ID for this iteration
 
   displayHeader();
-  console.log(`⌛ Processing ${queryId}...`.yellow);
+  // console.log(`⌛ Processing ${queryId}...`.yellow);
 
   let token = await getToken();
   fs.writeFileSync(TOKEN_FILE_PATH, token);
@@ -122,7 +122,7 @@ const handleTasksForQueryID = async (queryId) => {
     let loopCount = 0; // Menambahkan variabel untuk melacak jumlah loop
 
     while (!gameSuccessful) {
-      console.log(`🎮 Checking if ${username} has already played the game...`);
+      console.log(`🎮 Checking if ${username} has already played the game...`.blue);
 
       if (balance.playPasses > 0) {
         let counter = balance.playPasses;
@@ -159,8 +159,9 @@ const handleTasksForQueryID = async (queryId) => {
             }
           } catch (error) {
             loopCount++; // Menambahkan hitungan loop saat terjadi error
-            console.log(`⚠️ An error occurred while trying to play the game. Retrying... (Loop count: ${loopCount})`.red);
+            console.log(`⚠️ An error occurred while trying to play the game. Retrying...`.red);
             console.log(`⚠️ Loop count: ${loopCount}`.red);
+            console.log('');
             break; // Jika terjadi error, keluar dari loop internal dan ulangi dari awal
           }
         }
