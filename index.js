@@ -392,15 +392,16 @@ const handleTasksForQueryID = async (queryId) => {
             console.log(`⚠️ An error occurred while trying to play the game. Retrying...`.red);
             console.log(`⚠️ Loop count: ${loopCount}`.red);
             console.log('');
-            break;
-          }
 
-          if (loopCount >= 100) {
-            console.log('🚨 Loop count has reached 100. Generating new token and restarting...'.red);
-            token = await getToken(); // Generate new token
-            fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
-            loopCount = 0; // Reset loop count
-            return handleTasksForQueryID(queryId); // Restart the process for the same QUERY_ID
+            if (loopCount >= 100) {
+              console.log('🚨 Loop count has reached 100. Generating new token and restarting...'.red);
+              token = await getToken(); // Generate new token
+              fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
+              loopCount = 0; // Reset loop count
+              return handleTasksForQueryID(queryId); // Restart the process for the same QUERY_ID
+            }
+
+            break;
           }
         }
       } else {
