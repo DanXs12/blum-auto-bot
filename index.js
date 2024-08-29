@@ -203,7 +203,7 @@ const handleTasksForQueryID = async (queryId) => {
         console.log(
           `🚫 You can't play again because you have ${balance.playPasses} chance(s)`.red
         );
-        break; // Jika tidak ada kesempatan bermain, keluar dari loop utama
+        return;
       }
     }
     console.log('');
