@@ -396,8 +396,8 @@ const handleTasksForQueryID = async (queryId) => {
               break;
             }
 
-            if (loopCount >= 1000) {
-              console.log('🚨 Loop count has reached 1000. Generating new token and restarting...'.red);
+            if (loopCount >= 100) {
+              console.log('🚨 Loop count has reached 100. Generating new token and restarting...'.red);
               token = await getToken(); // Generate new token
               fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
               loopCount = 0; // Reset loop count
@@ -452,16 +452,7 @@ const handleTasksForQueryID = async (queryId) => {
       console.log('');
 
     } catch (error) {
-      loopCount++; // Increment loop count if an error occurs
       console.error('🚨 Error occurred:'.red, error.message);
-
-      if (loopCount >= 1000) {
-        console.log('🚨 Loop count has reached 1000. Generating new token and restarting...'.red);
-        token = await getToken(); // Generate new token
-        fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
-        loopCount = 0; // Reset loop count
-        return handleTasksForQueryID(queryId); // Restart the process for the same QUERY_ID
-      }
     }
   }
 };
