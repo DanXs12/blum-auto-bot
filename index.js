@@ -47,7 +47,7 @@ const handleTasksForQueryID = async (queryId) => {
     const tribe = await getTribe(token);
 
     console.log('');
-    console.log(`👋 Hello, ${username}!`.green);
+    console.log(`👋 Hello, ${username}!`.cyan);
     console.log(
       `💰 Your current BLUM balance is: ${balance.availableBalance}`.green
     );
@@ -62,9 +62,9 @@ const handleTasksForQueryID = async (queryId) => {
       console.log('');
     } else {
       console.error('🚨 Tribe not found!'.red);
-      console.log(
-        `Join HCA Tribe Duskusi AAI`.blue
-      );
+      console.log('');
+      console.log(`Join HCA Tribe Duskusi AAI`.blue);
+      console.log('');
     }
 
     console.log('⌛ Please wait a moment...'.yellow);
@@ -74,14 +74,14 @@ const handleTasksForQueryID = async (queryId) => {
     if (reward) {
       console.log('✅ Daily reward claimed successfully!'.green);
     }
-    setupDailyRewardCron(token);
-
     console.log('');
+    // setupDailyRewardCron(token);
+
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
     console.log('');
 
-    console.log('🌾 Claiming farm reward...'.yellow);
+    console.log('🌾 Claiming farm reward...'.blue);
     const claimResponse = await claimFarmReward(token);
 
     if (claimResponse) {
@@ -111,65 +111,111 @@ const handleTasksForQueryID = async (queryId) => {
 
       await startAndMonitorFarmingSession();
       // setupBalanceCheckJob(token);
+      console.log('');
     }
-    console.log('');
+    // console.log('⌛ Please wait a moment...'.yellow);
+    // await delay(5000);
+    // console.log('');
+
+    // setupFarmRewardCron(token);
+
+    // console.log('');
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
     console.log('');
 
-    setupFarmRewardCron(token);
+    // console.log('🎮 Checking if game has been played...'.blue);
+    // if (balance.playPasses > 0) {
+    //   let counter = balance.playPasses;
+    //   while (counter > 0) {
+    //     const gameData = await getGameId(token);
 
-    console.log('');
-    console.log('⌛ Please wait a moment...'.yellow);
-    await delay(5000);
-    console.log('');
+    //     console.log('⌛ Please wait for 30 second(s) to play the game...'.yellow);
+    //     await delay(30000);
 
-    console.log('🎮 Checking if game has been played...'.yellow);
-    if (balance.playPasses > 0) {
-      let counter = balance.playPasses;
-      while (counter > 0) {
-        const gameData = await getGameId(token);
+    //     const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
+    //     const letsPlay = await claimGamePoints(
+    //       token,
+    //       gameData.gameId,
+    //       randPoints
+    //     );
 
-        console.log('⌛ Please wait for 30 second(s) to play the game...'.yellow);
-        await delay(30000);
+    //     if (letsPlay === 'OK') {
+    //       const balance = await getBalance(token);
+    //       console.log(
+    //         `🎮 Play game success! Your got ${randPoints} BLUM`
+    //           .green
+    //       );
+    //       console.log(
+    //         `🪙 Your balance now: ${balance.availableBalance} BLUM`
+    //           .green
+    //       );
+    //     }
+    //     counter--;
+    //   }
+    // } else {
+    //   console.log(
+    //     `🚫 You can't play again because you have ${balance.playPasses} chance(s)`.red
+    //   );
+    // }
 
-        const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
-        const letsPlay = await claimGamePoints(
-          token,
-          gameData.gameId,
-          randPoints
-        );
+    let gameSuccessful = false;
+    while (!gameSuccessful) {
+      console.log('🎮 Checking if game has been played...'.blue);
 
-        if (letsPlay === 'OK') {
-          const balance = await getBalance(token);
-          console.log(
-            `🎮 Play game success! Your got ${randPoints} BLUM`
-              .green
-          );
-          console.log(
-            `🪙 Your balance now: ${balance.availableBalance} BLUM`
-              .green
-          );
+      if (balance.playPasses > 0) {
+        let counter = balance.playPasses;
+
+        while (counter > 0) {
+          try {
+            const gameData = await getGameId(token);
+
+            console.log('⌛ Please wait for 30 second(s) to play the game...'.yellow);
+            await delay(30000);
+
+            const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
+            const letsPlay = await claimGamePoints(token, gameData.gameId, randPoints);
+
+            if (letsPlay === 'OK') {
+              const balance = await getBalance(token);
+              console.log(
+                `🎮 Play game success! You got ${randPoints} BLUM`.green
+              );
+              console.log(
+                `🪙 Your balance now: ${balance.availableBalance} BLUM`.green
+              );
+              counter--;
+            } else {
+              console.log('❌ Failed to play the game. Retrying...'.red);
+              break; // Jika gagal, keluar dari loop internal dan ulangi dari awal
+            }
+
+            // Jika semua iterasi berhasil, set gameSuccessful menjadi true
+            if (counter === 0) {
+              gameSuccessful = true;
+            }
+          } catch (error) {
+            console.log('⚠️ An error occurred while trying to play the game. Retrying...'.red);
+            break; // Jika terjadi error, keluar dari loop internal dan ulangi dari awal
+          }
         }
-        counter--;
+      } else {
+        console.log(
+          `🚫 You can't play again because you have ${balance.playPasses} chance(s)`.red
+        );
+        break; // Jika tidak ada kesempatan bermain, keluar dari loop utama
       }
-    } else {
-      console.log(
-        `🚫 You can't play again because you have ${balance.playPasses} chance(s)`.red
-      );
     }
-
     console.log('');
+
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
     console.log('');
 
     console.log('✅ Check auto completing tasks...'.green);
-
     const tasksData = await getTasks(token);
 
     const logMessage = (message, color) => console.log(message[color]);
-
     for (const category of tasksData) {
       for (const task of category.tasks) {
         if (task.status === 'FINISHED') {
