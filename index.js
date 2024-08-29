@@ -20,10 +20,10 @@ const {
   claimDailyReward,
 } = require('./src/api.js');
 const {
-  setupCronJob,
-  setupBalanceCheckJob,
-  setupDailyRewardCron,
-  setupFarmRewardCron,
+  // setupCronJob,
+  // setupBalanceCheckJob,
+  // setupDailyRewardCron,
+  // setupFarmRewardCron,
 } = require('./src/cronJobs');
 const { delay } = require('./src/utils');
 const { displayHeader } = require('./src/display');
@@ -46,7 +46,6 @@ const handleTasksForQueryID = async (queryId) => {
     const balance = await getBalance(token);
     const tribe = await getTribe(token);
 
-    console.log('');
     console.log(`👋 Hello, ${username}!`.cyan);
     console.log(
       `💰 Your current BLUM balance is: ${balance.availableBalance}`.green
@@ -79,7 +78,6 @@ const handleTasksForQueryID = async (queryId) => {
 
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
-    console.log('');
 
     console.log('🌾 Claiming farm reward...'.blue);
     const claimResponse = await claimFarmReward(token);
@@ -113,55 +111,16 @@ const handleTasksForQueryID = async (queryId) => {
       // setupBalanceCheckJob(token);
       console.log('');
     }
-    // console.log('⌛ Please wait a moment...'.yellow);
-    // await delay(5000);
-    // console.log('');
 
     // setupFarmRewardCron(token);
 
     // console.log('');
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
-    console.log('');
-
-    // console.log('🎮 Checking if game has been played...'.blue);
-    // if (balance.playPasses > 0) {
-    //   let counter = balance.playPasses;
-    //   while (counter > 0) {
-    //     const gameData = await getGameId(token);
-
-    //     console.log('⌛ Please wait for 30 second(s) to play the game...'.yellow);
-    //     await delay(30000);
-
-    //     const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
-    //     const letsPlay = await claimGamePoints(
-    //       token,
-    //       gameData.gameId,
-    //       randPoints
-    //     );
-
-    //     if (letsPlay === 'OK') {
-    //       const balance = await getBalance(token);
-    //       console.log(
-    //         `🎮 Play game success! Your got ${randPoints} BLUM`
-    //           .green
-    //       );
-    //       console.log(
-    //         `🪙 Your balance now: ${balance.availableBalance} BLUM`
-    //           .green
-    //       );
-    //     }
-    //     counter--;
-    //   }
-    // } else {
-    //   console.log(
-    //     `🚫 You can't play again because you have ${balance.playPasses} chance(s)`.red
-    //   );
-    // }
 
     let gameSuccessful = false;
     while (!gameSuccessful) {
-      console.log('🎮 Checking if game has been played...'.blue);
+      console.log(`🎮 Checking if ${username} has already played the game...`);
 
       if (balance.playPasses > 0) {
         let counter = balance.playPasses;
@@ -184,10 +143,11 @@ const handleTasksForQueryID = async (queryId) => {
               console.log(
                 `🪙 Your balance now: ${balance.availableBalance} BLUM`.green
               );
-              console.log('')
+              console.log('');
               counter--;
             } else {
               console.log('❌ Failed to play the game. Retrying...'.red);
+              console.log('');
               break; // Jika gagal, keluar dari loop internal dan ulangi dari awal
             }
 
@@ -207,47 +167,11 @@ const handleTasksForQueryID = async (queryId) => {
         break;
       }
     }
-    console.log('berhasil keluar dari game'.bold);
+    console.log('');
 
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
-    console.log('');
 
-    // console.log('✅ Check auto completing tasks...'.green);
-    // const tasksData = await getTasks(token);
-
-    // const logMessage = (message, color) => console.log(message[color]);
-    // for (const category of tasksData) {
-    //   for (const task of category.tasks) {
-    //     if (task.status === 'FINISHED') {
-    //       logMessage(`⏭️  Task "${task.title}" is already completed.`, 'cyan');
-    //     } else if (task.status === 'NOT_STARTED') {
-    //       logMessage(`⏳ Task "${task.title}" is not started yet. Starting now...`, 'red');
-
-    //       const startedTask = await startTask(token, task.id, task.title);
-    //       if (startedTask) {
-    //         logMessage(`✅ Task "${startedTask.title}" has been started!`, 'green');
-
-    //         logMessage(`⏳ Claiming reward for "${task.title}" is starting now...`, 'red');
-    //         try {
-    //           const claimedTask = await claimTaskReward(token, task.id);
-    //           logMessage(`✅ Task "${claimedTask.title}" has been claimed!`, 'green');
-    //           logMessage(`🎁 Reward: ${claimedTask.reward}`, 'green');
-    //         } catch (error) {
-    //           logMessage(`🚫 Unable to claim task "${task.title}", please try to claim it manually.`, 'red');
-    //         }
-    //       }
-    //     } else if (task.status === 'STARTED' || task.status === 'READY_FOR_CLAIM') {
-    //       try {
-    //         const claimedTask = await claimTaskReward(token, task.id);
-    //         logMessage(`✅ Task "${claimedTask.title}" has been claimed!`, 'green');
-    //         logMessage(`🎁 Reward: ${claimedTask.reward}`, 'green');
-    //       } catch (error) {
-    //         logMessage(`🚫 Unable to claim task "${task.title}".`, 'red');
-    //       }
-    //     }
-    //   }
-    // }
     console.log('✅ Check auto completing tasks...'.green);
     const tasksData = await getTasks(token);
 
@@ -287,19 +211,20 @@ const handleTasksForQueryID = async (queryId) => {
   }
 };
 
-// Main loop to process all QUERY_IDs and restart every 2 hours
+// Main loop to process all QUERY_IDs and restart every 20 miutes
 (async () => {
   const queryIds = process.env.QUERY_IDS.split(',').map(line => line.trim());
 
   while (true) { // Infinite loop to keep the process running
     for (const queryId of queryIds) {
       await handleTasksForQueryID(queryId);
+      console.log('');
       console.log(`🔄 Finished processing ${queryId}, moving to the next one...\n`.yellow);
     }
+    console.log('✅ All QUERY_IDs processed! Waiting for 20 minutes before restarting...'.green);
+    console.log('');
 
-    console.log('✅ All QUERY_IDs processed! Waiting for 2 hours before restarting...'.green);
-
-    // delayed 2 hours after all id done
+    // delayed 20 minutes after all id done
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     const formatTime = (ms) => {
@@ -329,7 +254,7 @@ const handleTasksForQueryID = async (queryId) => {
     };
 
     // Use the countdown function
-    const duration = 7380000; // 2 hours in milliseconds
+    const duration = 1200000; // 20 minutes in milliseconds
     await countdown(duration);
 
   }
