@@ -212,41 +212,75 @@ const handleTasksForQueryID = async (queryId) => {
     await delay(5000);
     console.log('');
 
+    // console.log('✅ Check auto completing tasks...'.green);
+    // const tasksData = await getTasks(token);
+
+    // const logMessage = (message, color) => console.log(message[color]);
+    // for (const category of tasksData) {
+    //   for (const task of category.tasks) {
+    //     if (task.status === 'FINISHED') {
+    //       logMessage(`⏭️  Task "${task.title}" is already completed.`, 'cyan');
+    //     } else if (task.status === 'NOT_STARTED') {
+    //       logMessage(`⏳ Task "${task.title}" is not started yet. Starting now...`, 'red');
+
+    //       const startedTask = await startTask(token, task.id, task.title);
+    //       if (startedTask) {
+    //         logMessage(`✅ Task "${startedTask.title}" has been started!`, 'green');
+
+    //         logMessage(`⏳ Claiming reward for "${task.title}" is starting now...`, 'red');
+    //         try {
+    //           const claimedTask = await claimTaskReward(token, task.id);
+    //           logMessage(`✅ Task "${claimedTask.title}" has been claimed!`, 'green');
+    //           logMessage(`🎁 Reward: ${claimedTask.reward}`, 'green');
+    //         } catch (error) {
+    //           logMessage(`🚫 Unable to claim task "${task.title}", please try to claim it manually.`, 'red');
+    //         }
+    //       }
+    //     } else if (task.status === 'STARTED' || task.status === 'READY_FOR_CLAIM') {
+    //       try {
+    //         const claimedTask = await claimTaskReward(token, task.id);
+    //         logMessage(`✅ Task "${claimedTask.title}" has been claimed!`, 'green');
+    //         logMessage(`🎁 Reward: ${claimedTask.reward}`, 'green');
+    //       } catch (error) {
+    //         logMessage(`🚫 Unable to claim task "${task.title}".`, 'red');
+    //       }
+    //     }
+    //   }
+    // }
     console.log('✅ Check auto completing tasks...'.green);
     const tasksData = await getTasks(token);
 
-    const logMessage = (message, color) => console.log(message[color]);
+    let totalCompletedTasks = 0;
+    let totalFailedTasks = 0;
+    let totalRewards = 0;
+
     for (const category of tasksData) {
       for (const task of category.tasks) {
-        if (task.status === 'FINISHED') {
-          logMessage(`⏭️  Task "${task.title}" is already completed.`, 'cyan');
-        } else if (task.status === 'NOT_STARTED') {
-          logMessage(`⏳ Task "${task.title}" is not started yet. Starting now...`, 'red');
-
-          const startedTask = await startTask(token, task.id, task.title);
-          if (startedTask) {
-            logMessage(`✅ Task "${startedTask.title}" has been started!`, 'green');
-
-            logMessage(`⏳ Claiming reward for "${task.title}" is starting now...`, 'red');
-            try {
+        try {
+          if (task.status === 'FINISHED') {
+            totalCompletedTasks++;
+          } else if (task.status === 'NOT_STARTED') {
+            const startedTask = await startTask(token, task.id, task.title);
+            if (startedTask) {
               const claimedTask = await claimTaskReward(token, task.id);
-              logMessage(`✅ Task "${claimedTask.title}" has been claimed!`, 'green');
-              logMessage(`🎁 Reward: ${claimedTask.reward}`, 'green');
-            } catch (error) {
-              logMessage(`🚫 Unable to claim task "${task.title}", please try to claim it manually.`, 'red');
+              totalCompletedTasks++;
+              totalRewards += claimedTask.reward;
             }
-          }
-        } else if (task.status === 'STARTED' || task.status === 'READY_FOR_CLAIM') {
-          try {
+          } else if (task.status === 'STARTED' || task.status === 'READY_FOR_CLAIM') {
             const claimedTask = await claimTaskReward(token, task.id);
-            logMessage(`✅ Task "${claimedTask.title}" has been claimed!`, 'green');
-            logMessage(`🎁 Reward: ${claimedTask.reward}`, 'green');
-          } catch (error) {
-            logMessage(`🚫 Unable to claim task "${task.title}".`, 'red');
+            totalCompletedTasks++;
+            totalRewards += claimedTask.reward;
           }
+        } catch (error) {
+          totalFailedTasks++;
         }
       }
     }
+    console.log(`✅ Total tasks completed: ${totalCompletedTasks}`);
+    console.log(`🚫 Total tasks failed: ${totalFailedTasks}`);
+    console.log(`🎁 Total rewards: ${totalRewards}`);
+    console.log('');
+
   } catch (error) {
     console.error('🚨 Error occurred:'.red, error.message);
   }
