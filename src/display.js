@@ -1,5 +1,5 @@
 function displayHeader() {
-  // process.stdout.write('\x1Bc');
+  process.stdout.write('\x1Bc');
   console.log('')
   console.log('========================================'.cyan);
   console.log('=            Blum Auto Bot             ='.cyan);
