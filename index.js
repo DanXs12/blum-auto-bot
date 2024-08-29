@@ -119,6 +119,8 @@ const handleTasksForQueryID = async (queryId) => {
     await delay(5000);
 
     let gameSuccessful = false;
+    let loopCount = 0; // Menambahkan variabel untuk melacak jumlah loop
+
     while (!gameSuccessful) {
       console.log(`🎮 Checking if ${username} has already played the game...`);
 
@@ -156,7 +158,9 @@ const handleTasksForQueryID = async (queryId) => {
               gameSuccessful = true;
             }
           } catch (error) {
-            console.log('⚠️ An error occurred while trying to play the game. Retrying...'.red);
+            loopCount++; // Menambahkan hitungan loop saat terjadi error
+            console.log(`⚠️ An error occurred while trying to play the game. Retrying... (Loop count: ${loopCount})`.red);
+            console.log(`⚠️ Loop count: ${loopCount}`.red);
             break; // Jika terjadi error, keluar dari loop internal dan ulangi dari awal
           }
         }
@@ -167,6 +171,7 @@ const handleTasksForQueryID = async (queryId) => {
         break;
       }
     }
+
     console.log('');
 
     console.log('⌛ Please wait a moment...'.yellow);
