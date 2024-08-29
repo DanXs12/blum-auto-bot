@@ -184,6 +184,7 @@ const handleTasksForQueryID = async (queryId) => {
               console.log(
                 `🪙 Your balance now: ${balance.availableBalance} BLUM`.green
               );
+              console.log('')
               counter--;
             } else {
               console.log('❌ Failed to play the game. Retrying...'.red);
@@ -203,10 +204,10 @@ const handleTasksForQueryID = async (queryId) => {
         console.log(
           `🚫 You can't play again because you have ${balance.playPasses} chance(s)`.red
         );
-        return;
+        break;
       }
     }
-    console.log('');
+    console.log('berhasil keluar dari game'.bold);
 
     console.log('⌛ Please wait a moment...'.yellow);
     await delay(5000);
