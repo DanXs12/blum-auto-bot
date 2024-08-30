@@ -320,6 +320,31 @@ const handleTasksForQueryID = async (queryId) => {
     const claimResponse = await claimFarmReward(token);
     if (claimResponse) {
       console.log('✅ Farm reward claimed successfully!'.green);
+      const startAndMonitorFarmingSession = async () => {
+        const farmingSession = await startFarmingSession(token);
+        const farmStartTime = moment(farmingSession.startTime).format(
+          'MMMM Do YYYY, h:mm:ss A'
+        );
+        const farmEndTime = moment(farmingSession.endTime).format(
+          'MMMM Do YYYY, h:mm:ss A'
+        );
+
+        console.log(`✅ Farming session started!`.green);
+        console.log(`⏰ Start time: ${farmStartTime}`);
+        console.log(`⏳ End time: ${farmEndTime}`);
+
+        const farmDuration = farmingSession.endTime - farmingSession.startTime;
+
+        setTimeout(async () => {
+          console.log('🌾 Farming session ended. Generating new token and starting a new session...'.yellow);
+          token = await getToken(); // Generate new token
+          fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
+          console.log('✅ New token has been generated and saved.'.green);
+          return handleTasksForQueryID(queryId);
+        }, farmDuration);
+      };
+      await startAndMonitorFarmingSession();
+      console.log('');
     } else {
       console.log('🚫 No farm reward available. Starting farming session instead...'.red);
 
@@ -365,8 +390,6 @@ const handleTasksForQueryID = async (queryId) => {
           return handleTasksForQueryID(queryId);
         }, farmDuration);
       };
-
-
       await startAndMonitorFarmingSession();
       console.log('');
     }
