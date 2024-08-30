@@ -276,7 +276,7 @@ const handleTasksForQueryID = async (queryId) => {
   console.log('✅ New token has been saved.');
   console.log('');
 
-  let loopCount = 0; // Menambahkan variabel untuk melacak jumlah loop
+  let loopCount = 0;
 
   try {
     const username = await getUsername(token);
@@ -289,6 +289,7 @@ const handleTasksForQueryID = async (queryId) => {
     );
     console.log(`🎮 Your chances to play the game: ${balance.playPasses}`);
     console.log('');
+
     console.log('🏰 Your tribe details:');
     if (tribe) {
       console.log(`   - Name: ${tribe.title}`);
@@ -317,12 +318,30 @@ const handleTasksForQueryID = async (queryId) => {
 
     console.log('🌾 Claiming farm reward...'.blue);
     const claimResponse = await claimFarmReward(token);
-
     if (claimResponse) {
       console.log('✅ Farm reward claimed successfully!'.green);
     } else {
       console.log('🚫 No farm reward available. Starting farming session instead...'.red);
 
+      // const startAndMonitorFarmingSession = async () => {
+      //   const farmingSession = await startFarmingSession(token);
+      //   const farmStartTime = moment(farmingSession.startTime).format(
+      //     'MMMM Do YYYY, h:mm:ss A'
+      //   );
+      //   const farmEndTime = moment(farmingSession.endTime).format(
+      //     'MMMM Do YYYY, h:mm:ss A'
+      //   );
+
+      //   console.log(`✅ Farming session started!`.green);
+      //   console.log(`⏰ Start time: ${farmStartTime}`);
+      //   console.log(`⏳ End time: ${farmEndTime}`);
+
+      //   const farmDuration = farmingSession.endTime - farmingSession.startTime;
+      //   setTimeout(async () => {
+      //     console.log('🌾 Farming session ended. Starting new session...'.yellow);
+      //     await startAndMonitorFarmingSession();
+      //   }, farmDuration);
+      // };
       const startAndMonitorFarmingSession = async () => {
         const farmingSession = await startFarmingSession(token);
         const farmStartTime = moment(farmingSession.startTime).format(
@@ -337,11 +356,20 @@ const handleTasksForQueryID = async (queryId) => {
         console.log(`⏳ End time: ${farmEndTime}`);
 
         const farmDuration = farmingSession.endTime - farmingSession.startTime;
+
         setTimeout(async () => {
-          console.log('🌾 Farming session ended. Starting new session...'.yellow);
+          console.log('🌾 Farming session ended. Generating new token and starting a new session...'.yellow);
+
+          // Generate a new token after farming session ends
+          token = await getToken();
+          fs.writeFileSync(TOKEN_FILE_PATH, token);
+          console.log('✅ New token has been generated and saved.'.green);
+
+          // Start a new farming session with the new token
           await startAndMonitorFarmingSession();
         }, farmDuration);
       };
+
 
       await startAndMonitorFarmingSession();
       console.log('');
