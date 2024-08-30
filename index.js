@@ -359,14 +359,10 @@ const handleTasksForQueryID = async (queryId) => {
 
         setTimeout(async () => {
           console.log('🌾 Farming session ended. Generating new token and starting a new session...'.yellow);
-
-          // Generate a new token after farming session ends
-          token = await getToken();
-          fs.writeFileSync(TOKEN_FILE_PATH, token);
+          token = await getToken(); // Generate new token
+          fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
           console.log('✅ New token has been generated and saved.'.green);
-
-          // Start a new farming session with the new token
-          await startAndMonitorFarmingSession();
+          return handleTasksForQueryID(queryId);
         }, farmDuration);
       };
 
