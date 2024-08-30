@@ -393,7 +393,9 @@ const handleTasksForQueryID = async (queryId) => {
             console.log('⌛ Please wait for 30 second(s) to play the game...'.yellow);
             await delay(30000);
 
-            const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
+            // const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
+            const randPoints = Math.floor(Math.random() * (1000 - 500 + 1)) + 500;
+
             const letsPlay = await claimGamePoints(token, gameData.gameId, randPoints);
 
             if (letsPlay === 'OK') {
