@@ -34,12 +34,13 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //   process.env.QUERY_ID = queryId; // Set the QUERY_ID for this iteration
 
 //   displayHeader();
-//   // console.log(`⌛ Processing ${queryId}...`.yellow);
 
 //   let token = await getToken();
 //   fs.writeFileSync(TOKEN_FILE_PATH, token);
 //   console.log('✅ New token has been saved.');
 //   console.log('');
+
+//   let loopCount = 0;
 
 //   try {
 //     const username = await getUsername(token);
@@ -52,6 +53,7 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //     );
 //     console.log(`🎮 Your chances to play the game: ${balance.playPasses}`);
 //     console.log('');
+
 //     console.log('🏰 Your tribe details:');
 //     if (tribe) {
 //       console.log(`   - Name: ${tribe.title}`);
@@ -74,19 +76,14 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //       console.log('✅ Daily reward claimed successfully!'.green);
 //     }
 //     console.log('');
-//     // setupDailyRewardCron(token);
 
 //     console.log('⌛ Please wait a moment...'.yellow);
 //     await delay(5000);
 
 //     console.log('🌾 Claiming farm reward...'.blue);
 //     const claimResponse = await claimFarmReward(token);
-
 //     if (claimResponse) {
 //       console.log('✅ Farm reward claimed successfully!'.green);
-//     } else {
-//       console.log('🚫 No farm reward available. Starting farming session instead...'.red);
-
 //       const startAndMonitorFarmingSession = async () => {
 //         const farmingSession = await startFarmingSession(token);
 //         const farmStartTime = moment(farmingSession.startTime).format(
@@ -101,25 +98,70 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //         console.log(`⏳ End time: ${farmEndTime}`);
 
 //         const farmDuration = farmingSession.endTime - farmingSession.startTime;
+
 //         setTimeout(async () => {
-//           console.log('🌾 Farming session ended. Starting new session...'.yellow);
-//           await startAndMonitorFarmingSession();
+//           console.log('🌾 Farming session ended. Generating new token and starting a new session...'.yellow);
+//           token = await getToken(); // Generate new token
+//           fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
+//           console.log('✅ New token has been generated and saved.'.green);
+//           return handleTasksForQueryID(queryId);
 //         }, farmDuration);
 //       };
-
 //       await startAndMonitorFarmingSession();
-//       // setupBalanceCheckJob(token);
+//       console.log('');
+//     } else {
+//       console.log('🚫 No farm reward available. Starting farming session instead...'.red);
+
+//       // const startAndMonitorFarmingSession = async () => {
+//       //   const farmingSession = await startFarmingSession(token);
+//       //   const farmStartTime = moment(farmingSession.startTime).format(
+//       //     'MMMM Do YYYY, h:mm:ss A'
+//       //   );
+//       //   const farmEndTime = moment(farmingSession.endTime).format(
+//       //     'MMMM Do YYYY, h:mm:ss A'
+//       //   );
+
+//       //   console.log(`✅ Farming session started!`.green);
+//       //   console.log(`⏰ Start time: ${farmStartTime}`);
+//       //   console.log(`⏳ End time: ${farmEndTime}`);
+
+//       //   const farmDuration = farmingSession.endTime - farmingSession.startTime;
+//       //   setTimeout(async () => {
+//       //     console.log('🌾 Farming session ended. Starting new session...'.yellow);
+//       //     await startAndMonitorFarmingSession();
+//       //   }, farmDuration);
+//       // };
+//       const startAndMonitorFarmingSession = async () => {
+//         const farmingSession = await startFarmingSession(token);
+//         const farmStartTime = moment(farmingSession.startTime).format(
+//           'MMMM Do YYYY, h:mm:ss A'
+//         );
+//         const farmEndTime = moment(farmingSession.endTime).format(
+//           'MMMM Do YYYY, h:mm:ss A'
+//         );
+
+//         console.log(`✅ Farming session started!`.green);
+//         console.log(`⏰ Start time: ${farmStartTime}`);
+//         console.log(`⏳ End time: ${farmEndTime}`);
+
+//         const farmDuration = farmingSession.endTime - farmingSession.startTime;
+
+//         setTimeout(async () => {
+//           console.log('🌾 Farming session ended. Generating new token and starting a new session...'.yellow);
+//           token = await getToken(); // Generate new token
+//           fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
+//           console.log('✅ New token has been generated and saved.'.green);
+//           return handleTasksForQueryID(queryId);
+//         }, farmDuration);
+//       };
+//       await startAndMonitorFarmingSession();
 //       console.log('');
 //     }
 
-//     // setupFarmRewardCron(token);
-
-//     // console.log('');
 //     console.log('⌛ Please wait a moment...'.yellow);
 //     await delay(5000);
 
 //     let gameSuccessful = false;
-//     let loopCount = 0; // Menambahkan variabel untuk melacak jumlah loop
 
 //     while (!gameSuccessful) {
 //       console.log(`🎮 Checking if ${username} has already played the game...`.blue);
@@ -135,6 +177,7 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //             await delay(30000);
 
 //             const randPoints = Math.floor(Math.random() * (240 - 160 + 1)) + 400;
+
 //             const letsPlay = await claimGamePoints(token, gameData.gameId, randPoints);
 
 //             if (letsPlay === 'OK') {
@@ -150,10 +193,9 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //             } else {
 //               console.log('❌ Failed to play the game. Retrying...'.red);
 //               console.log('');
-//               break; // Jika gagal, keluar dari loop internal dan ulangi dari awal
+//               break;
 //             }
 
-//             // Jika semua iterasi berhasil, set gameSuccessful menjadi true
 //             if (counter === 0) {
 //               gameSuccessful = true;
 //             }
@@ -162,7 +204,16 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //             console.log(`⚠️ An error occurred while trying to play the game. Retrying...`.red);
 //             console.log(`⚠️ Loop count: ${loopCount}`.red);
 //             console.log('');
-//             break; // Jika terjadi error, keluar dari loop internal dan ulangi dari awal
+
+//             if (loopCount >= 100) {
+//               console.log('🚨 Loop count has reached 100. Generating new token and restarting...'.red);
+//               token = await getToken(); // Generate new token
+//               fs.writeFileSync(TOKEN_FILE_PATH, token); // Save new token
+//               loopCount = 0; // Reset loop count
+//               return handleTasksForQueryID(queryId); // Restart the process for the same QUERY_ID
+//             }
+
+//             break;
 //           }
 //         }
 //       } else {
@@ -215,13 +266,13 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //   } catch (error) {
 //     console.error('🚨 Error occurred:'.red, error.message);
 //   }
-// };
+// }
 
-// // Main loop to process all QUERY_IDs and restart every 20 miutes
+// // Main loop to process all QUERY_IDs and restart every 20 minutes
 // (async () => {
 //   const queryIds = process.env.QUERY_IDS.split(',').map(line => line.trim());
 
-//   while (true) { // Infinite loop to keep the process running
+//   while (true) {
 //     for (const queryId of queryIds) {
 //       await handleTasksForQueryID(queryId);
 //       console.log('');
@@ -230,7 +281,6 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //     console.log('✅ All QUERY_IDs processed! Waiting for 20 minutes before restarting...'.green);
 //     console.log('');
 
-//     // delayed 20 minutes after all id done
 //     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 //     const formatTime = (ms) => {
@@ -253,16 +303,14 @@ const TOKEN_FILE_PATH = path.join(__dirname, 'accessToken.txt');
 //         const timeLeft = formatTime(remaining);
 //         process.stdout.write(`⏳ Time left: ${timeLeft}\r`);
 
-//         await delay(1000); // Update every 1 second
+//         await delay(1000);
 //       }
 
 //       console.log(`✅ Time's up!`);
 //     };
 
-//     // Use the countdown function
 //     const duration = 1200000; // 20 minutes in milliseconds
 //     await countdown(duration);
-
 //   }
 // })();
 
@@ -348,25 +396,6 @@ const handleTasksForQueryID = async (queryId) => {
     } else {
       console.log('🚫 No farm reward available. Starting farming session instead...'.red);
 
-      // const startAndMonitorFarmingSession = async () => {
-      //   const farmingSession = await startFarmingSession(token);
-      //   const farmStartTime = moment(farmingSession.startTime).format(
-      //     'MMMM Do YYYY, h:mm:ss A'
-      //   );
-      //   const farmEndTime = moment(farmingSession.endTime).format(
-      //     'MMMM Do YYYY, h:mm:ss A'
-      //   );
-
-      //   console.log(`✅ Farming session started!`.green);
-      //   console.log(`⏰ Start time: ${farmStartTime}`);
-      //   console.log(`⏳ End time: ${farmEndTime}`);
-
-      //   const farmDuration = farmingSession.endTime - farmingSession.startTime;
-      //   setTimeout(async () => {
-      //     console.log('🌾 Farming session ended. Starting new session...'.yellow);
-      //     await startAndMonitorFarmingSession();
-      //   }, farmDuration);
-      // };
       const startAndMonitorFarmingSession = async () => {
         const farmingSession = await startFarmingSession(token);
         const farmStartTime = moment(farmingSession.startTime).format(
@@ -490,6 +519,11 @@ const handleTasksForQueryID = async (queryId) => {
             totalRewards += claimedTask.reward;
           }
         } catch (error) {
+          // Check for status code 520
+          if (error.response && error.response.status === 520) {
+            console.log('🚨 Received status code 520, restarting process...'.red);
+            return handleTasksForQueryID(queryId);
+          }
           totalFailedTasks++;
         }
       }
@@ -501,51 +535,11 @@ const handleTasksForQueryID = async (queryId) => {
 
   } catch (error) {
     console.error('🚨 Error occurred:'.red, error.message);
+    // Check for status code 520
+    if (error.response && error.response.status === 520) {
+      console.log('🚨 Received status code 520, restarting process...'.red);
+      return handleTasksForQueryID(queryId);
+    }
   }
 }
 
-// Main loop to process all QUERY_IDs and restart every 20 minutes
-(async () => {
-  const queryIds = process.env.QUERY_IDS.split(',').map(line => line.trim());
-
-  while (true) {
-    for (const queryId of queryIds) {
-      await handleTasksForQueryID(queryId);
-      console.log('');
-      console.log(`🔄 Finished processing ${queryId}, moving to the next one...\n`.yellow);
-    }
-    console.log('✅ All QUERY_IDs processed! Waiting for 20 minutes before restarting...'.green);
-    console.log('');
-
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-    const formatTime = (ms) => {
-      const totalSeconds = Math.floor(ms / 1000);
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    };
-
-    const countdown = async (duration) => {
-      const start = Date.now();
-      let remaining = duration;
-
-      while (remaining > 0) {
-        const elapsed = Date.now() - start;
-        remaining = duration - elapsed;
-
-        const timeLeft = formatTime(remaining);
-        process.stdout.write(`⏳ Time left: ${timeLeft}\r`);
-
-        await delay(1000);
-      }
-
-      console.log(`✅ Time's up!`);
-    };
-
-    const duration = 1200000; // 20 minutes in milliseconds
-    await countdown(duration);
-  }
-})();
