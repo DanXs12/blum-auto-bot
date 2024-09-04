@@ -268,7 +268,7 @@ const handleTasksForQueryID = async (queryId) => {
   }
 }
 
-// Main loop to process all QUERY_IDs and restart every 20 minutes
+// Main loop to process all QUERY_IDs and restart every 2 hours
 (async () => {
   const queryIds = process.env.QUERY_IDS.split(',').map(line => line.trim());
 
@@ -278,7 +278,7 @@ const handleTasksForQueryID = async (queryId) => {
       console.log('');
       console.log(`🔄 Finished processing ${queryId}, moving to the next one...\n`.yellow);
     }
-    console.log('✅ All QUERY_IDs processed! Waiting for 20 minutes before restarting...'.green);
+    console.log('✅ All QUERY_IDs processed! Waiting for 2 hours before restarting...'.green);
     console.log('');
 
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -309,7 +309,7 @@ const handleTasksForQueryID = async (queryId) => {
       console.log(`✅ Time's up!`);
     };
 
-    const duration = 1200000; // 20 minutes in milliseconds
+    const duration = 7200000; // milliseconds
     await countdown(duration);
   }
 })();
