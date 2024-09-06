@@ -2,7 +2,7 @@ const axios = require('axios');
 
 async function getToken() {
   const { data } = await axios({
-    url: 'https://gateway.blum.codes/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP',
+    url: 'https://user-domain.blum.codes/api/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP',
     method: 'POST',
     data: {
       query: process.env.QUERY_ID,
@@ -60,8 +60,10 @@ async function claimFarmReward(token) {
   } catch (error) {
     if (error.response.data.message === `It's too early to claim`) {
       console.error(`🚨 Claim failed! It's too early to claim.`.red);
+    } else if (error.response.data.message === `Need to start farm`) {
+      console.error(`🚨 Claim failed! Need to start farm.`.red);
     } else {
-      console.error(`🚨 Error occured from farm claim: ${error}`.red);
+      console.error(`🚨 Error occurred from farm claim: ${error}`.red);
     }
   }
 }
@@ -84,7 +86,7 @@ async function claimDailyReward(token) {
         `🚨 Daily claim failed because you already claim this day.`.red
       );
     } else {
-      console.error(`🚨 Error occured from daily claim: ${error}`.red);
+      console.error(`🚨 Error occurred from daily claim: ${error}`.red);
     }
   }
 }
